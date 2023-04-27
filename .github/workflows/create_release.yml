@@ -37,7 +37,7 @@ jobs:
 #          body: |
 #            Releasing ${{ steps.version.outputs.next_tag }}.
       - name: Check out epidata & copy files
-        run:
+        run: |
           cd ..
           git clone https://github.com/cmu-delphi/delphi-epidata
           cp www-covidcast/src/stores/descriptions.raw.txt delphi-epidata/src/server/endpoints/covidcast_utils/descriptions.raw.txt
