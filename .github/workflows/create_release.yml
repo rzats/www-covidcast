@@ -19,20 +19,32 @@ jobs:
         run: |
           git fetch origin dev:dev
           git reset --hard origin/dev
-      - name: Change version number
-        id: version
-        run: |
-          echo -n "::set-output name=next_tag::"
-          npm version --no-git-tag-version ${{ github.event.inputs.versionName }}
-      - name: Create pull request into main
-        uses: peter-evans/create-pull-request@v3
+#      - name: Change version number
+#        id: version
+#        run: |
+#          echo -n "::set-output name=next_tag::"
+#          npm version --no-git-tag-version ${{ github.event.inputs.versionName }}
+#      - name: Create pull request into main
+#        uses: peter-evans/create-pull-request@v3
+#        with:
+#          branch: release/${{ steps.version.outputs.next_tag }}
+#          commit-message: 'chore: release ${{ steps.version.outputs.next_tag }}'
+#          base: main
+#          title: Release ${{ steps.version.outputs.next_tag }}
+#          labels: chore
+#          reviewers: krivard
+#          # assignees:
+#          body: |
+#            Releasing ${{ steps.version.outputs.next_tag }}.
+      - name: Check out epidata & copy files
+        run:
+          cd ..
+          git clone https://github.com/cmu-delphi/delphi-epidata
+          cp www-covidcast/src/stores/descriptions.raw.txt delphi-epidata/src/server/endpoints/covidcast_utils/descriptions.raw.txt
+          cp www-covidcast/src/stores/questions.raw.txt delphi-epidata/src/server/endpoints/covidcast_utils/questions.raw.txt
+      - name: Create PR to epidata
+        uses: repo-sync/pull-request@v2
         with:
-          branch: release/${{ steps.version.outputs.next_tag }}
-          commit-message: 'chore: release ${{ steps.version.outputs.next_tag }}'
-          base: main
-          title: Release ${{ steps.version.outputs.next_tag }}
-          labels: chore
-          reviewers: krivard
-          # assignees:
-          body: |
-            Releasing ${{ steps.version.outputs.next_tag }}.
+          destination_branch: "www-covidcast-sync"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          destination_repository: "cmu-delphi/delphi-epidata"
