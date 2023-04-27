@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: main
           ssh-key: ${{ secrets.CMU_DELPHI_DEPLOY_MACHINE_SSH }}
@@ -36,15 +36,24 @@ jobs:
 #          # assignees:
 #          body: |
 #            Releasing ${{ steps.version.outputs.next_tag }}.
-      - name: Check out epidata & copy files
+      - name: Check out delphi epidata 
+        uses: actions/checkout@v3
+        with:
+          repository: cmu-delphi/delphi-epidata
+          path: delphi-epidata
+      - name: Copy files
         run: |
           cd ..
-          git clone https://github.com/cmu-delphi/delphi-epidata
-          cp www-covidcast/src/stores/descriptions.raw.txt delphi-epidata/src/server/endpoints/covidcast_utils/descriptions.raw.txt
-          cp www-covidcast/src/stores/questions.raw.txt delphi-epidata/src/server/endpoints/covidcast_utils/questions.raw.txt
-      - name: Create PR to epidata
-        uses: repo-sync/pull-request@v2
+          cp src/stores/descriptions.raw.txt delphi-epidata/src/server/endpoints/covidcast_utils/descriptions.raw.txt
+          cp src/stores/questions.raw.txt delphi-epidata/src/server/endpoints/covidcast_utils/questions.raw.txt
+      - name: Create pull request into epidata
+        uses: peter-evans/create-pull-request@v3
         with:
-          destination_branch: "www-covidcast-sync"
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          destination_repository: "cmu-delphi/delphi-epidata"
+          branch: www-covidcast-release/${{ steps.version.outputs.next_tag }}
+          commit-message: 'chore: sync to www-covidcast release ${{ steps.version.outputs.next_tag }}'
+          base: dev
+          title: Sync to www-covidcast release ${{ steps.version.outputs.next_tag }}
+          labels: chore
+          reviewers: krivard
+          body: |
+            Syncing covidcast_utils files to www-covidcast release ${{ steps.version.outputs.next_tag }}.
