@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
         with:
           ref: main
           ssh-key: ${{ secrets.CMU_DELPHI_DEPLOY_MACHINE_SSH }}
@@ -43,11 +43,11 @@ jobs:
           path: delphi-epidata
       - name: Copy files
         run: |
-          cd ..
+          ls -al
           cp src/stores/descriptions.raw.txt delphi-epidata/src/server/endpoints/covidcast_utils/descriptions.raw.txt
           cp src/stores/questions.raw.txt delphi-epidata/src/server/endpoints/covidcast_utils/questions.raw.txt
       - name: Create pull request into epidata
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v5
         with:
           branch: www-covidcast-release/${{ steps.version.outputs.next_tag }}
           commit-message: 'chore: sync to www-covidcast release ${{ steps.version.outputs.next_tag }}'
