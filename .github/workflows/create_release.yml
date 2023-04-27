@@ -19,23 +19,23 @@ jobs:
         run: |
           git fetch origin dev:dev
           git reset --hard origin/dev
-#      - name: Change version number
-#        id: version
-#        run: |
-#          echo -n "::set-output name=next_tag::"
-#          npm version --no-git-tag-version ${{ github.event.inputs.versionName }}
-#      - name: Create pull request into main
-#        uses: peter-evans/create-pull-request@v3
-#        with:
-#          branch: release/${{ steps.version.outputs.next_tag }}
-#          commit-message: 'chore: release ${{ steps.version.outputs.next_tag }}'
-#          base: main
-#          title: Release ${{ steps.version.outputs.next_tag }}
-#          labels: chore
-#          reviewers: krivard
-#          # assignees:
-#          body: |
-#            Releasing ${{ steps.version.outputs.next_tag }}.
+      - name: Change version number
+        id: version
+        run: |
+          echo -n "::set-output name=next_tag::"
+          npm version --no-git-tag-version ${{ github.event.inputs.versionName }}
+      - name: Create pull request into main
+        uses: peter-evans/create-pull-request@v3
+        with:
+          branch: release/${{ steps.version.outputs.next_tag }}
+          commit-message: 'chore: release ${{ steps.version.outputs.next_tag }}'
+          base: main
+          title: Release ${{ steps.version.outputs.next_tag }}
+          labels: chore
+          reviewers: krivard
+          # assignees:
+          body: |
+            Releasing ${{ steps.version.outputs.next_tag }}.
       - name: Check out delphi epidata 
         uses: actions/checkout@v3
         with:
