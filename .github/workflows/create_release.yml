@@ -49,6 +49,7 @@ jobs:
           cp src/stores/questions.raw.txt delphi-epidata/src/server/endpoints/covidcast_utils/questions.raw.txt
       - name: Create pull request into epidata
         uses: peter-evans/create-pull-request@v5
+        working-directory: delphi-epidata
         with:
           token: ${{ secrets.EPIDATA_PAT }}
           branch: www-covidcast-release/${{ steps.version.outputs.next_tag }}
